@@ -15,8 +15,8 @@
         <van-cell title="我创建的队伍" is-link to="/user/createTeam" />
         <van-cell title="我加入的队伍" is-link to="/user/joinTeam" />
         <van-row justify="end">
-            <van-col span="5" >
-                <van-button plain hairline type="primary" @click="quitUser">退出</van-button>
+            <van-col span="7" >
+                <van-button plain hairline type="primary" @click="quitUser">退出登录</van-button>
             </van-col>
         </van-row>
 

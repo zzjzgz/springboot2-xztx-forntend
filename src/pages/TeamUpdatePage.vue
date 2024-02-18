@@ -4,7 +4,11 @@
             <van-cell-group inset>
                 <van-field name="uploader" label="上传头像">
                     <template #input>
-                        <van-uploader v-model="value" />
+                        <van-uploader
+                            :after-read="afterRead"
+                            v-model="fileList" multiple
+                            :max-count="1"
+                        />
                     </template>
                 </van-field>
                 <van-field
@@ -92,6 +96,7 @@ const router = useRouter();
 const route = useRoute();
 const teamId = route.query.id;
 
+
 //最小时间
 const minDate = new Date();
 
@@ -99,20 +104,20 @@ const minDate = new Date();
 const currentDate = ref(['2024', '02', '08']);		//定义一个初始时间(年月日)
 const currentTime = ref(['12', '00', '00']);		//定义一个初始时间(时分秒)
 const columnsType = ['hour', 'minute', 'second'];
+//用户填写的表单数据
+const addTeamData = ref({});
+const fileList = ref([
+    { url: '' },
+    // Uploader 根据文件后缀来判断是否为图片文件
+    // 如果图片 URL 中不包含类型信息，可以添加 isImage 标记来声明
+    // { url: 'https://cloud-image', isImage: true },
+]);
 
 const onConfirm = () => {
     //组合过期时间，'T'是满足后端序列化配的
     addTeamData.value.expireTime = currentDate.value.join('-') + 'T' + currentTime.value.join(':');
     showPicker.value = false;		//有了这行才会使picker点击“确认”后自动关闭
 };
-
-//头像上传
-const value = ref([
-    { url: 'https://zzj-img.oss-cn-hangzhou.aliyuncs.com/2024/02.jpg' },
-]);
-
-//用户填写的表单数据
-const addTeamData = ref({});
 
 //获取之前的队伍信息
 onMounted(async ()=>{
@@ -125,6 +130,7 @@ onMounted(async ()=>{
             id:route.query.id,
         }
     });
+    fileList.value[0].url = res.data.teamAvatarUrl;
     if (res?.code === 0){
         addTeamData.value = res.data;
     }else {
@@ -132,13 +138,30 @@ onMounted(async ()=>{
     }
 })
 
+//头像上传
+const afterRead = async (file) => {
+    const config = {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    };
+    const res = await MyAxios.post("/team/upload",{
+        file:file.file,
+    },config)
+    if (res?.code === 0 && res.data){
+        fileList.value[0].url = res.data;
+        showSuccessToast("上传成功");
+    }else {
+        showFailToast(res.description);
+    }
+};
+
 
 
 //提交
 const onSubmit = async () => {
     const postData = {
         ...addTeamData.value,
-        status: Number(addTeamData.value.status)
+        status: Number(addTeamData.value.status),
+        teamAvatarUrl:fileList.value[0].url,
     }
     //todo前端参数校验
     const res = await MyAxios.post("/team/update",postData)
