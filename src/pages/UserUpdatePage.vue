@@ -8,7 +8,7 @@
                 fit="cover"
                 position="center"
                 :src="user.avatarUrl"
-                @click="toEdit('avatarUrl','昵称',user.avatarUrl)"
+                @click="toAvatarUrlEdit('avatarUrl','头像',user.avatarUrl)"
             />
         </div>
         <van-cell title="昵称" is-link to="/user/edit" :value="user.username" @click="toEdit('username','昵称',user.username)"/>
@@ -59,9 +59,22 @@ onMounted(async ()=>{
 
 const router = useRouter();
 
+//更新文字信息
 const toEdit = (editKey: string, editName: string, currentValue: string) => {
     router.push({
         path: '/user/edit',
+        query: {
+            editKey,
+            editName,
+            currentValue,
+        }
+    })
+}
+
+//更新头像
+const toAvatarUrlEdit = (editKey: string, editName: string, currentValue: string) => {
+    router.push({
+        path: '/user/avatarUrl',
         query: {
             editKey,
             editName,

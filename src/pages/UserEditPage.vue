@@ -32,7 +32,6 @@ const editUser = ref({
 })
 
 
-
 const onSubmit = async () =>{
     const currentUser = await getCurrentUser();
     if (!currentUser){

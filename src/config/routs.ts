@@ -14,6 +14,7 @@ import JoinTeam from "../pages/JoinTeam.vue";
 import CreateTeam from "../pages/CreateTeam.vue";
 import UserPage from "../pages/UserPage.vue";
 import UserRegisterPage from "../pages/UserRegisterPage.vue";
+import UserUrlEditPage from "../pages/UserUrlEditPage.vue";
 
 const routes = [
     { path: '/', component: Index },
@@ -29,6 +30,7 @@ const routes = [
     { path: '/user/edit',  component: UserEditPage },
     { path: '/user/login', title:'用户登录', component: UserLoginPage },
     { path: '/user/register', title:'用户注册', component: UserRegisterPage },
+    { path: '/user/avatarUrl', title:'用户更换头像', component: UserUrlEditPage },
 
 ]
 

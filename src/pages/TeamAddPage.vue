@@ -5,7 +5,11 @@
                 <van-field name="uploader" label="上传头像">
                     <template #input>
                         <van-uploader
-                            v-model="value"
+                            :after-read="afterRead"
+                            v-model="fileList" multiple
+                            @oversize="onOversize"
+                            :max-count="2"
+                            :max-size="1024 * 1024"
                         />
                     </template>
                 </van-field>
@@ -89,7 +93,7 @@
 
 import {ref} from "vue";
 import MyAxios from "../plugins/myAxios.js";
-import {showFailToast, showSuccessToast} from "vant";
+import {showFailToast, showSuccessToast, showToast} from "vant";
 import {useRouter} from "vue-router";
 //控制弹窗
 const showPicker = ref(false);
@@ -118,23 +122,47 @@ const onConfirm = () => {
     addTeamData.value.expireTime = currentDate.value.join('-') + 'T' + currentTime.value.join(':');
     showPicker.value = false;		//有了这行才会使picker点击“确认”后自动关闭
 };
-
-//头像上传
-const value = ref([
-    { url: 'https://zzj-img.oss-cn-hangzhou.aliyuncs.com/2024/02.jpg' },
+//头像上传数据
+const fileList = ref([
+    { url: 'src/assets/add.svg' },
+    // Uploader 根据文件后缀来判断是否为图片文件
+    // 如果图片 URL 中不包含类型信息，可以添加 isImage 标记来声明
+    // { url: 'https://cloud-image', isImage: true },
 ]);
+
 
 //用户填写的表单数据
 const addTeamData = ref({...initFormData})
+
+//头像上传
+const afterRead = async (file) => {
+    const config = {
+        headers: { 'Content-Type': 'multipart/form-data' },
+    };
+    const res = await MyAxios.post("/upload",{
+        file:file.file,
+    },config)
+    if (res?.code === 0 && res.data){
+        fileList.value[0].url = res.data;
+        showSuccessToast("上传成功");
+    }else {
+        showFailToast(res.description);
+    }
+};
+// 限制上传大小
+const onOversize = (file) => {
+    console.log(file);
+    showToast('文件大小不能超过 1 MB');
+};
+
 
 //提交
 const onSubmit = async () => {
     const postData = {
         ...addTeamData.value,
         status: Number(addTeamData.value.status),
-        teamAvatarUrl:value.value[0].url
+        teamAvatarUrl:fileList.value[0].url
     }
-    console.log(postData);
     //todo前端参数校验
     const res = await MyAxios.post("/team/add",postData)
     if (res?.code === 0 && res.data){

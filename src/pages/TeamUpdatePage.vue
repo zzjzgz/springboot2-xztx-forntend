@@ -6,8 +6,10 @@
                     <template #input>
                         <van-uploader
                             :after-read="afterRead"
-                            v-model="fileList" multiple
-                            :max-count="1"
+                            v-model="fileList" reupload
+                            @oversize="onOversize"
+                            :max-count="2"
+                            :max-size="1024 * 1024"
                         />
                     </template>
                 </van-field>
@@ -86,7 +88,7 @@
 
 import {onMounted, ref} from "vue";
 import MyAxios from "../plugins/myAxios.js";
-import {showFailToast, showSuccessToast} from "vant";
+import {showFailToast, showSuccessToast, showToast} from "vant";
 import {useRoute, useRouter} from "vue-router";
 import myAxios from "../plugins/myAxios.js";
 //控制弹窗
@@ -140,10 +142,11 @@ onMounted(async ()=>{
 
 //头像上传
 const afterRead = async (file) => {
+
     const config = {
         headers: { 'Content-Type': 'multipart/form-data' },
     };
-    const res = await MyAxios.post("/team/upload",{
+    const res = await MyAxios.post("/upload",{
         file:file.file,
     },config)
     if (res?.code === 0 && res.data){
@@ -152,6 +155,11 @@ const afterRead = async (file) => {
     }else {
         showFailToast(res.description);
     }
+};
+// 限制上传大小
+const onOversize = (file) => {
+    console.log(file);
+    showToast('文件大小不能超过 1 MB');
 };
 
 
