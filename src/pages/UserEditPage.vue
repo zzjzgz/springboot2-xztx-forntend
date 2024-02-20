@@ -42,8 +42,10 @@ const onSubmit = async () =>{
     if(editUser.value.editKey === 'gender'){
         if (editUser.value.currentValue === '男'){
             editUser.value.currentValue = '0';
-        }else if (editUser.value.currentValue === '男'){
+        }else if (editUser.value.currentValue === '女'){
             editUser.value.currentValue = '1';
+        }else {
+            editUser.value.currentValue = '2';
         }
         res = await myAxios.post('/user/update',{
             'id':currentUser.id,

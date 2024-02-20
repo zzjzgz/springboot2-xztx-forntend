@@ -1,11 +1,11 @@
 <template>
     <form action="/">
         <van-search
-                v-model="searchText"
-                show-action
-                placeholder="请输入要搜索的标签"
-                @search="onSearch"
-                @cancel="onCancel"
+            v-model="searchText"
+            show-action
+            placeholder="请输入要搜索的标签"
+            @search="onSearch"
+            @cancel="onCancel"
         />
     </form>
     <van-divider content-position="left">已选标签</van-divider>
@@ -25,37 +25,51 @@
         :items="tagList"
     />
     <div style="padding: 10px">
-        <van-button type="primary" @click="doSearchResult" block="block">搜索</van-button>
+        <van-button type="primary" @click="onSubmit" block="block">提交</van-button>
     </div>
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
-import {useRouter} from "vue-router";
+import {useRoute, useRouter} from "vue-router";
+import {ref} from "vue";
+import myAxios from "../plugins/myAxios.ts";
+import {showFailToast, showSuccessToast, showToast} from "vant";
+import 'vant/es/toast/style'
+import {getCurrentUser} from "../service/user.ts";
+import MyAxios from "../plugins/myAxios.ts";
+
+const router = useRouter();
+const route = useRoute();
+
+const editUser = ref({
+    editKey: route.query.editKey,
+    currentValue:route.query.currentValue,
+    editName: route.query.editName,
+})
 
 const searchText = ref('');
-const router = useRouter()
+
 
 const originTagList = [
     {text: '方向',
-    children: [
-        { text: 'java', id: 'java' },
-        { text: 'GO', id: 'GO' },
-        { text: 'c++', id: 'c++' },
-        { text: '前端', id: '前端' },
-    ]},
+        children: [
+            { text: 'java', id: 'java' },
+            { text: 'GO', id: 'GO' },
+            { text: 'c++', id: 'c++' },
+            { text: '前端', id: '前端' },
+        ]},
     {text: '目标',
-    children: [
-        { text: '考研', id: '考研' },
-        { text: '春招', id: '春招' },
-        { text: '秋招', id: '秋招' },
-        { text: '社招', id: '社招' },
-        { text: '考公', id: '考公' },
-        { text: '竞赛', id: '竞赛' },
-        { text: '转行', id: '转行' },
-        { text: '跳槽', id: '跳槽' },
-        { text: '实习', id: '实习' },
-    ]},
+        children: [
+            { text: '考研', id: '考研' },
+            { text: '春招', id: '春招' },
+            { text: '秋招', id: '秋招' },
+            { text: '社招', id: '社招' },
+            { text: '考公', id: '考公' },
+            { text: '竞赛', id: '竞赛' },
+            { text: '转行', id: '转行' },
+            { text: '跳槽', id: '跳槽' },
+            { text: '实习', id: '实习' },
+        ]},
     {text: '身份',
         children: [
             { text: '小学', id: '小学' },
@@ -105,7 +119,7 @@ const originTagList = [
             { text: '绝区零', id: '绝区零' },
             { text: '蛋仔派对', id: '蛋仔派对' },
         ]},
-    ]
+]
 // 标签列表
 let tagList = ref(originTagList);
 
@@ -131,7 +145,9 @@ const onCancel = () => {
 
 // 已选中的标签
 const activeIds = ref([]);
+activeIds.value = JSON.parse(editUser.value.currentValue);
 const activeIndex = ref(0);
+
 
 /**
  * 移除标签
@@ -144,15 +160,25 @@ const doClose = (tag) => {
 }
 
 /**
- * 搜索
+ * 提交
  */
-const doSearchResult = ()=>{
-    router.push({
-        path:'/user/list',
-        query:{
-            tags:activeIds.value
-        }
+const onSubmit = async () =>{
+    const currentUser = await getCurrentUser();
+    if (!currentUser){
+        showFailToast('用户未登录');
+        return;
+    }
+    const res = await myAxios.post('/user/update',{
+        'id':currentUser.id,
+        [editUser.value.editKey as string]:editUser.value.currentValue,
     })
+    if (res.code === 0 && res.data >0){
+        showSuccessToast("修改成功");
+        router.back();
+    }else{
+        showFailToast(res.description);
+    }
+
 }
 </script>
 

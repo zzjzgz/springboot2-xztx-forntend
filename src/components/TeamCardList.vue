@@ -7,7 +7,7 @@
             :thumb="team.teamAvatarUrl"
     >
         <template #tags>
-            <van-text-ellipsis :content="'最大人数：' + team.maxNum.toString() + '人'"/>
+            <van-text-ellipsis :content="'人数：' + team.hasJoinNum.toString() + '/' + team.maxNum.toString() + '人'"/>
             <van-text-ellipsis :content="'过期时间：' + team.expireTime?.toString().slice(0,10)"/>
             <van-tag plain type="danger" style="margin-right: 5px;margin-top: 5px;color: cornflowerblue">
                 {{ teamStatesEnum[team.status] }}

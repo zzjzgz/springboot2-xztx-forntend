@@ -64,7 +64,6 @@ const afterRead = async (file) => {
 };
 // 限制上传大小
 const onOversize = (file) => {
-    console.log(file);
     showToast('文件大小不能超过 1 MB');
 };
 

@@ -17,7 +17,7 @@
         <van-cell title="性别" is-link to="/user/edit" :value="user.gender" @click="toEdit('gender','性别',user.gender)"/>
         <van-cell title="电话" is-link to="/user/edit" :value="user.phone" @click="toEdit('phone','电话',user.phone)"/>
         <van-cell title="邮箱" is-link to="/user/edit" :value="user.email" @click="toEdit('email','邮箱',user.email)"/>
-        <van-cell title="标签" is-link to="/user/edit" :value="user.tags" @click="toEdit('tags','标签',user.tags)">
+        <van-cell title="标签" is-link to="/user/updateTag" :value="user.tags" @click="toTagEdit('tags','标签',user.tags)">
             <van-tag plain type="danger" v-for="tag in JSON.parse(user.tags)" style="margin-right: 5px;margin-top: 5px;color: cornflowerblue">
                 {{ tag }}
             </van-tag>
@@ -75,6 +75,18 @@ const toEdit = (editKey: string, editName: string, currentValue: string) => {
 const toAvatarUrlEdit = (editKey: string, editName: string, currentValue: string) => {
     router.push({
         path: '/user/avatarUrl',
+        query: {
+            editKey,
+            editName,
+            currentValue,
+        }
+    })
+}
+
+//更新标签
+const toTagEdit = (editKey: string, editName: string, currentValue: string) => {
+    router.push({
+        path: '/user/updateTag',
         query: {
             editKey,
             editName,
