@@ -16,10 +16,12 @@ import UserPage from "../pages/UserPage.vue";
 import UserRegisterPage from "../pages/UserRegisterPage.vue";
 import UserUrlEditPage from "../pages/UserUrlEditPage.vue";
 import UserTagEditPage from "../pages/UserTagEditPage.vue";
+import TeamInfo from "../pages/TeamInfo.vue";
 
 const routes = [
     { path: '/', component: Index },
     { path: '/team', title:'队伍', component: Team },
+    { path: '/team/teamInfo', title:'队伍信息', component: TeamInfo },
     { path: '/team/add', title:'添加队伍', component: TeamAddPage },
     { path: '/team/update', title:'更新队伍', component: TeamUpdatePage },
     { path: '/user/update', title:'更新用户信息', component: UserUpdate },

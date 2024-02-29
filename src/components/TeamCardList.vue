@@ -5,6 +5,7 @@
             :desc="team.teamDescription"
             :title="team.teamName"
             :thumb="team.teamAvatarUrl"
+            @click="showTeamInfo(team.id,team.status,team.teamName,team.teamDescription,team.expireTime,team.maxNum,team.hasJoinNum,team.teamAvatarUrl)"
     >
         <template #tags>
             <van-text-ellipsis :content="'人数：' + team.hasJoinNum.toString() + '/' + team.maxNum.toString() + '人'"/>
@@ -130,6 +131,26 @@ const doQuitTeam = async (id: Number) => {
 const doJoinCancel = () => {
   joinTeamId.value = 0;
   password.value = '';
+}
+
+const showTeamInfo = (id : Number,states:String,teamName,teamDescription,expireTime,maxNum,hasJoinNum,teamAvatarUrl) => {
+    if (states == '0'){
+        router.push({
+            path:'/team/teamInfo',
+            query:{
+                id,
+                teamName,
+                teamDescription,
+                expireTime,
+                maxNum,
+                hasJoinNum,
+                teamAvatarUrl,
+            }
+        })
+    }else {
+        showFailToast("仅公开队伍允许查看队伍信息");
+        return;
+    }
 }
 
 </script>
