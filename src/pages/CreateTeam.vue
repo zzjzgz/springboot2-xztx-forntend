@@ -13,7 +13,25 @@
         v-model:offset="offset"
         is-link @click="showPopup"
     />
-    <team-card-list :team-list="teamList"/>
+    <!--    封装好的组件-->
+    <van-card
+        v-for="team in teamList"
+        :desc="team.teamDescription"
+        :title="team.teamName"
+        :thumb="team.teamAvatarUrl"
+    >
+        <template #tags>
+            <van-text-ellipsis :content="'最大人数：' + team.maxNum.toString() + '人'"/>
+            <van-text-ellipsis :content="'过期时间：' + team.expireTime?.toString().slice(0,10)"/>
+            <van-tag plain type="danger" style="margin-right: 5px;margin-top: 5px;color: cornflowerblue">
+                {{ teamStatesEnum[team.status] }}
+            </van-tag>
+        </template>
+        <template #footer>
+            <van-button size="small" v-if="team.userId === currentUser?.id" @click="doDeleteTeam(team.id)" color="#ff0000" plain type="primary">解散队伍
+            </van-button>
+        </template>
+    </van-card>
     <!-- 搜索提示 -->
     <van-empty v-if="teamList?.length < 1" image="search" description="未找到队伍" />
 
@@ -25,8 +43,12 @@ import TeamCardList from "../components/TeamCardList.vue";
 import {onMounted, ref} from "vue";
 import myAxios from "../plugins/myAxios.js";
 import {showFailToast, showSuccessToast} from "vant";
+import {teamStatesEnum} from "../constants/teamStates.ts";
+import {getCurrentUser} from "../service/user.ts";
 
 const router = useRouter()
+const currentUser = ref();
+
 
 //搜索
 const searchText = ref('');
@@ -61,6 +83,7 @@ const teamList = ref([])
 
 //加载队伍
 onMounted( async ()=>{
+    currentUser.value = await getCurrentUser();
     searchListTeam();
 })
 
