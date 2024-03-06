@@ -5,7 +5,6 @@
             :desc="team.teamDescription"
             :title="team.teamName"
             :thumb="team.teamAvatarUrl"
-            @click="showTeamInfo(team.id,team.status,team.teamName,team.teamDescription,team.expireTime,team.maxNum,team.hasJoinNum,team.teamAvatarUrl)"
     >
         <template #tags>
             <van-text-ellipsis :content="'人数：' + team.hasJoinNum.toString() + '/' + team.maxNum.toString() + '人'"/>
@@ -15,6 +14,8 @@
             </van-tag>
         </template>
         <template #footer>
+            <van-button size="small" v-if="team.status=='0'"  @click="showTeamInfo(team.id,team.status,team.teamName,team.teamDescription,team.expireTime,team.maxNum,team.hasJoinNum,team.teamAvatarUrl)" color="#000000" plain type="primary">查看队伍
+            </van-button>
             <van-button size="small" v-if="team.userId != currentUser?.id && !team.hasJoin" @click="preJoinTeam(team)" plain type="primary">加入队伍
             </van-button>
             <van-button size="small" v-if="team.userId === currentUser?.id" @click="doUpdateTeam(team.id)" color="#34D291" plain type="primary">更新队伍

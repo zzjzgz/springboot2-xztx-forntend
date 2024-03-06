@@ -64,6 +64,7 @@ const originTagList = [
             { text: '春招', id: '春招' },
             { text: '秋招', id: '秋招' },
             { text: '社招', id: '社招' },
+            { text: '校招', id: '校招' },
             { text: '考公', id: '考公' },
             { text: '竞赛', id: '竞赛' },
             { text: '转行', id: '转行' },
@@ -163,6 +164,8 @@ const doClose = (tag) => {
  * 提交
  */
 const onSubmit = async () =>{
+    const str = activeIds.value.toString().split(",")
+    const jsonStr = JSON.stringify(str);
     const currentUser = await getCurrentUser();
     if (!currentUser){
         showFailToast('用户未登录');
@@ -170,7 +173,7 @@ const onSubmit = async () =>{
     }
     const res = await myAxios.post('/user/update',{
         'id':currentUser.id,
-        [editUser.value.editKey as string]:editUser.value.currentValue,
+        [editUser.value.editKey as string]:jsonStr,
     })
     if (res.code === 0 && res.data >0){
         showSuccessToast("修改成功");
